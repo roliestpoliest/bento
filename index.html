@@ -35,29 +35,31 @@
     good morning, bento
     <div class="calculator">
         <div id="answer">
-            0
+            <input id="inputNum" type="text" placeholder="0" value="" onkeyup="isTyping(event)">
+            <div id="displayOp">?</div>
         </div>
         <div id="calc-buttons">
-            <input type="button" id="one" name="one" value="1">
-            <input type="button" id="two" name="two" value="2">
-            <input type="button" id="three" name="three" value="3">
-            <input type="button" class="operator" id="plus" name="plus" value="+">
-
-            <input type="button" id="four" name="four" value="4">
-            <input type="button" id="five" name="five" value="5">
-            <input type="button" id="six" name="six" value="6">
-            <input type="button" class="operator" id="minus" name="minus" value="-">
-
+            <input type="button" id="clear" name="clear" value="C">
+            <input type="button" class="operator" id="divide" name="divide" value="/">
+            
             <input type="button" id="seven" name="seven" value="7">
             <input type="button" id="eight" name="eight" value="8">
             <input type="button" id="nine" name="nine" value="9"> 
             <input type="button" class="operator" id="multiply" name="multiply" value="*">
-
-            <input type="button" id="clear" name="clear" value="C">
+            
+            <input type="button" id="four" name="four" value="4">
+            <input type="button" id="five" name="five" value="5">
+            <input type="button" id="six" name="six" value="6">
+            <input type="button" class="operator" id="minus" name="minus" value="-">
+            
+            <input type="button" id="one" name="one" value="1">
+            <input type="button" id="two" name="two" value="2">
+            <input type="button" id="three" name="three" value="3">
+            <input type="button" class="operator" id="plus" name="plus" value="+">
+            
             <input type="button" id="zero" name="zero" value="0">
+            <input type="button" id="decimal" name="decimal" value=".">
             <input type="button" id="equals" name="equals" value="=">
-            <input type="button" class="operator" id="divide" name="divide" value="/">
-
         </div>
     </div>
     <script src="./script.js"></script>
