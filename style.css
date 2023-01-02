@@ -18,16 +18,15 @@ body {
     padding: 0.5rem;
     background-color: var(--bg-color);
     color: wheat;
+    touch-action: manipulation;
 }
 
 .calculator {
     background-color: var(--calc-color);
-    margin: 2rem auto;
+    margin: 4rem auto;
     padding: 1rem;
     height: auto;
     width: 25rem;
-    /* width: auto; */
-
     text-align: center;
     border-radius: 1rem;
     display: flex;
@@ -86,6 +85,7 @@ body {
         border-width: 0.1rem; */
         border-radius: 1rem;
         box-shadow: 0 4px var(--box-shadow);
+        user-select: none
     }
 
 #calc-buttons {
@@ -100,9 +100,9 @@ body {
         border-color: var(--bg-color);
         border-radius: 0.5rem;
         background-color: #e9e9ed;
-        /* border: solid;
+        border: solid;
         border-color: #d0d0d6;
-        border-width: 0.1rem; */
+        border-width: 0.2rem;
         
     }
     input[type=button]:hover {
@@ -132,11 +132,6 @@ body {
     }
     input{
         width: calc(25% - 0.5rem);
-    }
-    input[type=button] {
-        border: solid;
-        border-color: #d0d0d6;
-        border-width: 0.2rem;
     }
     #clear {
         width: calc(75% - 0.5rem)

@@ -1,4 +1,15 @@
 'use strict';
+//global variables
+let displayValue = "null";
+let displayOperator = "";
+let rhs = null;
+let lhs = null;
+let prevOp = null;
+let nextOp = null;
+let inputList = "";
+let isShuffle = false;
+let counter = 0;
+
 // selectors
 const oneBtn = document.getElementById("one");
 const twoBtn = document.getElementById("two");
@@ -19,41 +30,40 @@ const equalsBtn = document.getElementById("equals");
 const decimalBtn = document.getElementById("decimal");
 const answerBtn = document.getElementById("answer");
 const inputNum = document.getElementById("inputNum");
-const showOp = document.getElementById("displayOp");
+const displayOp = document.getElementById("displayOp");
 
 // event listeners
 document.addEventListener("keydown", validInput);
-oneBtn.addEventListener("click", appendNum);
-twoBtn.addEventListener("click", appendNum);
-threeBtn.addEventListener("click", appendNum);
-fourBtn.addEventListener("click", appendNum);
-fiveBtn.addEventListener("click", appendNum);
-sixBtn.addEventListener("click", appendNum);
-sevenBtn.addEventListener("click", appendNum);
-eightBtn.addEventListener("click", appendNum);
-nineBtn.addEventListener("click", appendNum);
-zeroBtn.addEventListener("click", appendNum);
-plusBtn.addEventListener("click", queueOperation);
-minusBtn.addEventListener("click", queueOperation);
-multiplyBtn.addEventListener("click", queueOperation);
-divideBtn.addEventListener("click", queueOperation);
+oneBtn.addEventListener("click", (e) => appendNum(e.target.defaultValue));
+twoBtn.addEventListener("click", (e) => appendNum(e.target.defaultValue));
+threeBtn.addEventListener("click", (e) => appendNum(e.target.defaultValue));
+fourBtn.addEventListener("click", (e) => appendNum(e.target.defaultValue));
+fiveBtn.addEventListener("click", (e) => appendNum(e.target.defaultValue));
+sixBtn.addEventListener("click", (e) => appendNum(e.target.defaultValue));
+sevenBtn.addEventListener("click", (e) => appendNum(e.target.defaultValue));
+eightBtn.addEventListener("click", (e) => appendNum(e.target.defaultValue));
+nineBtn.addEventListener("click", (e) => appendNum(e.target.defaultValue));
+zeroBtn.addEventListener("click", (e) => appendNum(e.target.defaultValue));
+plusBtn.addEventListener("click", (e) => {queueOperation(e.target.defaultValue)});
+minusBtn.addEventListener("click", (e) => {queueOperation(e.target.defaultValue)});
+multiplyBtn.addEventListener("click", (e) => {queueOperation(e.target.defaultValue)});
+divideBtn.addEventListener("click", (e) => {queueOperation(e.target.defaultValue)});
+equalsBtn.addEventListener("click", (e) => {queueOperation(e.target.defaultValue)});
 decimalBtn.addEventListener("click", appendDot);
 clearBtn.addEventListener("click", clearFunc);
-equalsBtn.addEventListener("click", queueOperation);
-// inputNum.addEventListener("keyup", validInput);
-
-
-// let voidOperator = false;
-
-inputNum.focus();
-//global variables
-let displayValue = "null";
-let displayOperator = "";
-let rhs = null;
-let lhs = null;
-let prevOp = null;
-let nextOp = null;
-let inputList = "";
+displayOp.addEventListener("click", function(){
+    counter++;
+    if (counter % 3 == 0){
+        isShuffle = true
+        displayOp.style.backgroundColor = "#4f518c";
+        displayOp.style.color = "white";
+    }else{
+        isShuffle = false;
+        displayOp.style.backgroundColor = "#e4d9ff";
+        displayOp.style.color = "#495069";
+    }
+    console.log(counter + " " + isShuffle);
+});
 
 // functions
 function validInputHelper(event){
@@ -76,9 +86,9 @@ function validInput(event) {
         event.preventDefault();
     }
 
-    console.log(keycode);
+    // console.log(keycode);
     if(acceptableKeys.includes(keycode)){
-        console.log(String.fromCharCode(keycode));
+        // console.log(String.fromCharCode(keycode));
         // if(numberKeys.includes(keycode)){
         //     // appendNum(event);
         // }
@@ -91,8 +101,70 @@ function updateDisplay(input){
 };
 
 function updateDisplayOperator(op){
-    const displayOp = document.getElementById("displayOp");
     displayOp.innerText = op;
+};
+
+function appendNum(value){
+    if(displayValue == "null") displayValue = "";
+    
+    inputList += value;
+    displayValue += value;
+    updateDisplay(displayValue);
+    if(isShuffle) shuffleNumbers();
+};
+
+function appendDot() {
+    if(!displayValue.includes('.')){
+        displayValue == "null" ? displayValue = "0." : displayValue += ".";
+        inputList += ".";
+        updateDisplay(displayValue);
+    }
+};
+
+function queueOperation(value) {
+    let op = null;
+    switch(value){
+        case ("+"): op = "+"; break;
+        case ("-"): op = "-"; break;
+        case ("*"): op = "*"; break;
+        case ("/"): op = "/"; break;
+        case ("="): op = "="; break;
+        default: break;
+    }
+    if(isShuffle) shuffleOperators();
+    displayOperator = op;
+    updateDisplayOperator(displayOperator);
+    
+    if(inputList.slice(-1) == "+" || inputList.slice(-1) == "-" || inputList.slice(-1) == "*" || inputList.slice(-1) == "/")
+        nextOp == null ? prevOp = null : nextOp = null; 
+    inputList += value;
+    displayValue == "null" ? rhs = null : 
+        lhs == null ? lhs = displayValue : rhs = displayValue;
+    prevOp == null ? prevOp = op : nextOp = op;
+    if(lhs != null && prevOp != null && rhs != null) calculate();
+
+    displayValue = "null";
+    calculate();
+};
+
+function calculate(){
+    if(lhs != null && rhs != null && prevOp != null){
+        let solution = 0;
+        switch(prevOp){
+            case ("+"): solution = parseFloat(lhs) + parseFloat(rhs); break;
+            case ("-"): solution = parseFloat(lhs) - parseFloat(rhs); break;
+            case ("*"): solution = parseFloat(lhs) * parseFloat(rhs); break;
+            case ("/"): solution = parseFloat(lhs) / parseFloat(rhs); break;
+            default: break;
+        }
+        lhs = solution;
+        rhs = null;
+        prevOp = nextOp;
+        nextOp = null;
+        if(prevOp == "=") prevOp = null;
+        displayValue = "null";
+        updateDisplay(solution);
+    }
 };
 
 function clearFunc() {
@@ -105,105 +177,68 @@ function clearFunc() {
     nextOp = null;
     updateDisplay("");
     updateDisplayOperator("");
-};
-
-function appendNum(event){
-    if(displayValue == "null"){
-        displayValue = "";
-    }
-    inputList += event.target.defaultValue;
-    console.log("list: " + inputList);
-    displayValue += event.target.defaultValue;
-    updateDisplay(displayValue);
-    console.log("displayValue: " + displayValue);
-    console.log("append num: " + lhs + " " + prevOp + "---" + rhs + "---" + nextOp);
-};
-
-function appendDot(event) {
-    if(!displayValue.includes('.')){
-        displayValue == "null" ? displayValue = "0." : displayValue += ".";
-        inputList += event.target.defaultValue;
-        console.log("list: " + inputList);
-        updateDisplay(displayValue);
-    }
-    console.log("displayValue: " + displayValue);
-    console.log("append dot: " + lhs + " " + prevOp + " " + rhs + " " + nextOp);
-};
-
-function queueOperation(event) {
-    const eVal = event.target.defaultValue;  
-    let op = null;
     
-    switch(eVal){
-        case ("+"): 
-            op = "+"
-            break;
-        case ("-"): 
-            op = "-"
-            break;
-        case ("*"): 
-            op = "*"
-            break;
-        case ("/"): 
-            op = "/"
-            break;
-        case ("="):
-            op = "=";
-            break;
-        default:
-            break;
-    }
-    displayOperator = op;
-    updateDisplayOperator(displayOperator);
-    
-    if(inputList.slice(-1) == "+" || inputList.slice(-1) == "-" || inputList.slice(-1) == "*" || inputList.slice(-1) == "/"){
-        console.log("change signs");
-        nextOp == null ? prevOp = null : nextOp = null;
-    }
-    inputList += event.target.defaultValue;
-    console.log("list: " + inputList);
+    oneBtn.value = "1";
+    twoBtn.value = "2";
+    threeBtn.value = "3";
+    fourBtn.value = "4";
+    fiveBtn.value = "5";
+    sixBtn.value = "6";
+    sevenBtn.value = "7";
+    eightBtn.value = "8";
+    nineBtn.value = "9";
+    zeroBtn.value = "0";
+    plusBtn.value = "+";
+    minusBtn.value = "-";
+    multiplyBtn.value = "*";
+    divideBtn.value = "/";
+    equalsBtn.value = "=";
 
-    displayValue == "null" ? rhs = null : 
-        lhs == null ? lhs = displayValue : rhs = displayValue;
-    prevOp == null ? prevOp = op : nextOp = op;
+    isShuffle = false;
+    displayOp.style.backgroundColor = "#e4d9ff";
+    displayOp.style.color = "#495069";
 
-    console.log("q: " + lhs + " " + prevOp + " " + rhs + " " + nextOp);
-    if(lhs != null && prevOp != null && rhs != null){
-        calculate();
-    }
-
-    displayValue = "null";
-    calculate();
 };
 
-function calculate(){
-    if(lhs != null && rhs != null && prevOp != null){
-        let solution = 0;
-        switch(prevOp){
-            case ("+"):
-                solution = parseFloat(lhs) + parseFloat(rhs);
-                break;
-            case ("-"):
-                solution = parseFloat(lhs) - parseFloat(rhs);
-                break;
-            case ("*"):
-                solution = parseFloat(lhs) * parseFloat(rhs);
-                break;
-            case ("/"):
-                solution = parseFloat(lhs) / parseFloat(rhs);
-            default:
-                break;
-        }
-        console.log("solution: " + solution);
-        lhs = solution;
-        rhs = null;
-        prevOp = nextOp;
-        nextOp = null;
-        if(prevOp == "="){
-            prevOp = null;
-        }
-        displayValue = "null";
-        updateDisplay(solution);
-        console.log("calc: " + lhs + " " + prevOp + " " + rhs + " " + nextOp);
+function shuffle(array) {
+    var m = array.length, t, i;
+
+    while(m) {
+        i = Math.floor(Math.random() * m--);
+        t = array[m];
+        array[m] = array[i];
+        array[i] = t;
     }
+    return array;
+}
+
+function shuffleNumbers(){
+    const nums = shuffle(["1","2","3","4","5","6","7","8","9","0"]);
+    console.log(nums);
+    oneBtn.value = nums[1];
+    twoBtn.value = nums[2];
+    threeBtn.value = nums[3];
+    fourBtn.value = nums[4];
+    fiveBtn.value = nums[5];
+    sixBtn.value = nums[6];
+    sevenBtn.value = nums[7];
+    eightBtn.value = nums[8];
+    nineBtn.value = nums[9];
+    zeroBtn.value = nums[0];
 };
+
+function shuffleOperators(){
+    const ops = shuffle(["+","-","*","/","="]);
+    console.log(ops);
+    plusBtn.value = ops[0];
+    minusBtn.value = ops[1];
+    multiplyBtn.value = ops[2];
+    divideBtn.value = ops[3];
+    equalsBtn.value = ops[4];
+}
+
+function toggleShuffle(){
+    counter = counter + 1;
+    console.log(counter + " " + isShuffle);
+    if(counter % 3 == 0) isShuffle ? isShuffle = false : isShuffle = true;
+}
